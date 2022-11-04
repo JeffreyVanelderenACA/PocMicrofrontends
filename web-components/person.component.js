@@ -1,9 +1,5 @@
-import React from 'react';
-import { SafeAreaView, StatusBar, Text, View } from 'react-native';
-import WebView from 'react-native-webview';
-
-const getInjectableJavaScript = () => `
-  class PersonComponent extends HTMLElement {
+// eslint-disable-next-line no-undef
+class PersonComponent extends HTMLElement {
     static get observedAttributes() {
         return ['firstname'];
     }
@@ -60,7 +56,7 @@ const getInjectableJavaScript = () => `
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
             case 'firstname':
-                console.log("AttributeChangedCallback()");
+                console.log(`AttributeChangedCallback() -> old '${oldValue}' to new '${newValue}`);
                 break;
             default:
                 break;
@@ -77,7 +73,7 @@ function updateView(element) {
             bubbles: true,
             cancelable: false,
             composed: true,
-            detail: undefined,
+            detail: `Detail: ${element.shadowRoot.querySelector('#textInput').value} })`,
         });
         element.dispatchEvent(event);
     });
@@ -88,26 +84,7 @@ const componentName = 'some-person-component';
 // eslint-disable-next-line no-undef
 customElements.get(componentName) || customElements.define(componentName, PersonComponent);
 
-window.alert("web component ->" + !!customElements.get(componentName));
-`;
+// eslint-disable-next-line no-undef
+// const ExportedPersonComponent = customElements.get(componentName);
 
-const App = () => {
-    return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ height: 50, backgroundColor: 'white' }}>
-                <StatusBar barStyle={'light-content'} />
-                <Text style={{ color: 'black' }}>POC microfrontends</Text>
-            </View>
-            <WebView
-                style={{ flex: 1, borderWidth: 2, borderColor: 'red', backgroundColor: 'red' }}
-                sharedCookiesEnabled
-                thirdPartyCookiesEnabled
-                javaScriptEnabled
-                javaScriptCanOpenWindowsAutomatically
-                injectedJavaScript={getInjectableJavaScript()}
-            />
-        </SafeAreaView>
-    );
-};
-
-export default App;
+export { PersonComponent };
